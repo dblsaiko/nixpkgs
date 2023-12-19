@@ -16,6 +16,7 @@
   nix-update-script,
   versionCheckHook,
   buildPackages,
+  nixosTests,
 }:
 let
   pnpm = pnpm_11;
@@ -111,12 +112,15 @@ rustPackages_1_97.rustPlatform.buildRustPackage (finalAttrs: {
 
   nativeInstallCheckInputs = [ versionCheckHook ];
   doInstallCheck = true;
+
   passthru.updateScript = nix-update-script {
     extraArgs = [
       # avoid unstable pre‐releases
       "--version-regex"
       "^v([0-9.]+)$"
     ];
+
+    tests = { inherit (nixosTests) matrix-authentication-service; };
   };
 
   meta = {
