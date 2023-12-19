@@ -14,6 +14,7 @@
   cctools,
   nix-update-script,
   versionCheckHook,
+  nixosTests,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
@@ -89,12 +90,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
   versionCheckProgram = "${placeholder "out"}/bin/${finalAttrs.meta.mainProgram}";
   versionCheckProgramArg = "--version";
   doInstallCheck = true;
+
   passthru.updateScript = nix-update-script {
     extraArgs = [
       # avoid unstable pre‐releases
       "--version-regex"
       "^v([0-9.]+)$"
     ];
+
+    tests = { inherit (nixosTests) matrix-authentication-service; };
   };
 
   meta = {
