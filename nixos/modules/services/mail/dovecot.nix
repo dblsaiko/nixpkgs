@@ -72,7 +72,7 @@ let
         length lines
         - (findFirstIndex (
           line: match "[[:space:]]*" line == null # <=> Line is not empty
-        ) (length lines) (reverseList lines));
+        ) (length lines - 1) (reverseList lines));
       # Drop empty trailing lines from line list
       trimmedLines = sublist 0 lastContentIndex lines;
     in
@@ -90,7 +90,7 @@ let
     let
       escapedString = escape [ "\\" "\"" ] string;
     in
-    if match ''[[:space:]]*<.*|.*[[:space:]#"\].*|'' string != null then
+    if match ''[[:space:]]*<.*|.*[[:space:]#"\\].*|^$'' string != null then
       "\"${formatDovecotMultiline escapedString}\""
     else
       string;
