@@ -94,6 +94,7 @@ rustPlatform.buildRustPackage rec {
     changelog = "https://github.com/element-hq/matrix-authentication-service/releases/tag/v${version}";
     license = lib.licenses.agpl3Only;
     maintainers = with lib.maintainers; [ teutat3s ];
+    platforms = lib.platforms.linux;
     mainProgram = "mas-cli";
     # Note: broken on x86_64-darwin because of aligned_alloc, can be revisited after
     # https://github.com/NixOS/nixpkgs/pull/346043 is merged
