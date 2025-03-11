@@ -21,7 +21,10 @@ let
           target,
           ...
         }:
-        "${principal}\t${lib.concatStringsSep "," (lib.toList access)}\t${target}"
+        if target != "*" && target != null then
+          "${principal}\t${lib.concatStringsSep "," (lib.toList access)}\t${target}"
+        else
+          "${principal}\t${lib.concatStringsSep "," (lib.toList access)}"
       ) acl
     ))
     (lib.mapAttrsToList (
