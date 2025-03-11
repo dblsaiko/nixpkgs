@@ -46,6 +46,8 @@
   version,
   hash,
   patches ? [ ],
+  # Re-exported plugins for this version
+  dovecot_pigeonhole,
 }:
 
 stdenv.mkDerivation {
@@ -199,8 +201,12 @@ stdenv.mkDerivation {
       ++ teams.helsinki-systems.members;
     platforms = platforms.unix;
   };
-  passthru.tests = {
-    opensmtpd-interaction = nixosTests.opensmtpd;
-    inherit (nixosTests) dovecot;
+  passthru = {
+    tests = {
+      opensmtpd-interaction = nixosTests.opensmtpd;
+      inherit (nixosTests) dovecot;
+    };
+
+    pigeonhole = dovecot_pigeonhole;
   };
 }
