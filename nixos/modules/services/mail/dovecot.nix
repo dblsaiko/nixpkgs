@@ -33,10 +33,10 @@ let
   inherit (lib.strings) match;
 
   cfg = config.services.dovecot2;
-  dovecotPkg = pkgs.dovecot;
-
   baseDir = "/run/dovecot2";
   stateDir = "/var/lib/dovecot";
+
+  dovecot_pigeonhole = cfg.package.passthru.pigeonhole;
 
   sieveScriptSettings = mapAttrs' (
     to: _: nameValuePair "sieve_${to}" "${stateDir}/sieve/${to}"
@@ -178,7 +178,7 @@ let
 
     (optionalString cfg.enableQuota ''
       service quota-status {
-        executable = ${dovecotPkg}/libexec/dovecot/quota-status -p postfix
+        executable = ${cfg.package}/libexec/dovecot/quota-status -p postfix
         inet_listener {
           port = ${cfg.quotaPort}
         }
@@ -273,7 +273,6 @@ let
 in
 {
   imports = [
-    (mkRemovedOptionModule [ "services" "dovecot2" "package" ] "")
     (mkRemovedOptionModule [
       "services"
       "dovecot2"
@@ -287,6 +286,10 @@ in
 
   options.services.dovecot2 = {
     enable = mkEnableOption "the dovecot 2.x POP3/IMAP server";
+
+    package = mkPackageOption pkgs "dovecot" {
+      example = "dovecot_2_4";
+    };
 
     enablePop3 = mkEnableOption "starting the POP3 listener (when Dovecot is enabled)";
 
@@ -631,6 +634,11 @@ in
     };
 
     services.dovecot2 = {
+      package = mkDefault (
+        if versionAtLeast config.system.stateVersion "25.05"
+        then pkgs.dovecot_2_4
+        else pkgs.dovecot_2_3);
+
       protocols =
         optional cfg.enableImap "imap" ++ optional cfg.enablePop3 "pop3" ++ optional cfg.enableLmtp "lmtp";
 
@@ -704,8 +712,8 @@ in
       startLimitIntervalSec = 60; # 1 min
       serviceConfig = {
         Type = "notify";
-        ExecStart = "${dovecotPkg}/sbin/dovecot -F";
-        ExecReload = "${dovecotPkg}/sbin/doveadm reload";
+        ExecStart = "${cfg.package}/sbin/dovecot -F";
+        ExecReload = "${cfg.package}/sbin/doveadm reload";
         Restart = "on-failure";
         RestartSec = "1s";
         RuntimeDirectory = [ "dovecot2" ];
@@ -728,7 +736,7 @@ in
               else
                 cp -p '${from}' '${stateDir}/sieve/${to}'
               fi
-              ${pkgs.dovecot_pigeonhole}/bin/sievec '${stateDir}/sieve/${to}'
+              ${dovecot_pigeonhole}/bin/sievec '${stateDir}/sieve/${to}'
             '') cfg.sieve.scripts
           )}
           chown -R '${cfg.mailUser}:${cfg.mailGroup}' '${stateDir}/sieve'
@@ -740,11 +748,11 @@ in
             el:
             optionalString (el.before != null) ''
               cp -p ${el.before} ${stateDir}/imapsieve/before/${baseNameOf el.before}
-              ${pkgs.dovecot_pigeonhole}/bin/sievec '${stateDir}/imapsieve/before/${baseNameOf el.before}'
+              ${dovecot_pigeonhole}/bin/sievec '${stateDir}/imapsieve/before/${baseNameOf el.before}'
             ''
             + optionalString (el.after != null) ''
               cp -p ${el.after} ${stateDir}/imapsieve/after/${baseNameOf el.after}
-              ${pkgs.dovecot_pigeonhole}/bin/sievec '${stateDir}/imapsieve/after/${baseNameOf el.after}'
+              ${dovecot_pigeonhole}/bin/sievec '${stateDir}/imapsieve/after/${baseNameOf el.after}'
             ''
           ) cfg.imapsieve.mailbox}
 
@@ -754,7 +762,7 @@ in
         '';
     };
 
-    environment.systemPackages = [ dovecotPkg ];
+    environment.systemPackages = [ cfg.package ];
 
     warnings = warnAboutExtraConfigCollisions;
 
