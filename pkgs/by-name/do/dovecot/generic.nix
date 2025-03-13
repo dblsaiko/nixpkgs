@@ -40,6 +40,7 @@
   sqlite,
   withLua ? false,
   lua5_3,
+  dovecot-fts-flatcurve,
   ...
 }:
 {
@@ -48,6 +49,8 @@
   patches ? [ ],
   # Re-exported plugins for this version
   dovecot_pigeonhole,
+  dovecot_exporter,
+  dovecot_fts_xapian,
 }:
 
 stdenv.mkDerivation {
@@ -206,7 +209,10 @@ stdenv.mkDerivation {
       opensmtpd-interaction = nixosTests.opensmtpd;
       inherit (nixosTests) dovecot;
     };
+    inherit dovecot-fts-flatcurve;
 
     pigeonhole = dovecot_pigeonhole;
+    exporter = dovecot_exporter;
+    fts_xapian = dovecot_fts_xapian;
   };
 }
