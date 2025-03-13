@@ -20,18 +20,21 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url =
-      if lib.versionAtLeast version "2.4"
-      then "https://pigeonhole.dovecot.org/releases/${dovecotMajorMinor}/dovecot-pigeonhole-${version}.tar.gz"
-      else "https://pigeonhole.dovecot.org/releases/${dovecotMajorMinor}/dovecot-${dovecotMajorMinor}-pigeonhole-${version}.tar.gz";
+      if lib.versionAtLeast version "2.4" then
+        "https://pigeonhole.dovecot.org/releases/${dovecotMajorMinor}/dovecot-pigeonhole-${version}.tar.gz"
+      else
+        "https://pigeonhole.dovecot.org/releases/${dovecotMajorMinor}/dovecot-${dovecotMajorMinor}-pigeonhole-${version}.tar.gz";
     inherit hash;
   };
 
-  buildInputs = [
-    dovecot
-    openssl
-  ] ++ lib.optionals (lib.versionAtLeast version "2.4") [
-    openldap
-  ];
+  buildInputs =
+    [
+      dovecot
+      openssl
+    ]
+    ++ lib.optionals (lib.versionAtLeast version "2.4") [
+      openldap
+    ];
 
   preConfigure = ''
     substituteInPlace src/managesieve/managesieve-settings.c --replace \
