@@ -17,13 +17,13 @@
 
 stdenv.mkDerivation rec {
   pname = "dovecot-fts-xapian";
-  version = "1.9";
+  version = "1.9.1";
 
   src = fetchFromGitHub {
     owner = "grosjo";
     repo = "fts-xapian";
     rev = version;
-    hash = "sha256-jHXeCJVdRWGdLMooh5cq5ZeZPM5fDo1lO6U5VMcwf3g=";
+    hash = "sha256-+8THyzzBV8QQVQFeKCSvIzkr5oaE0vdWU2gsolChfoo=";
   };
 
   buildInputs = [
@@ -45,6 +45,14 @@ stdenv.mkDerivation rec {
     "--with-dovecot=${dovecot}/lib/dovecot"
     "--with-moduledir=${placeholder "out"}/lib/dovecot/modules"
   ];
+
+  preInstall = ''
+    sed -i 's/settingsdir = $(dovecot_moduledir)\/settings/settingsdir = $(moduledir)\/settings/' src/Makefile
+    sed -i 's/echo " $(MKDIR_P) '\'''$(DESTDIR)$(dovecot_moduledir)'\'''";/echo " $(MKDIR_P) '\'''$(DESTDIR)$(moduledir)'\'''";/' src/Makefile
+    sed -i 's/$(MKDIR_P) "$(DESTDIR)$(dovecot_moduledir)" || exit 1;/$(MKDIR_P) "$(DESTDIR)$(moduledir)" || exit 1;/' src/Makefile
+    sed -i 's/echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '\'''$(DESTDIR)$(dovecot_moduledir)'\'''";/echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '\'''$(DESTDIR)$(moduledir)'\'''";/' src/Makefile
+    sed -i 's/$(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(dovecot_moduledir)";/$(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(moduledir)";/' src/Makefile
+  '';
 
   meta = with lib; {
     homepage = "https://github.com/grosjo/fts-xapian";
