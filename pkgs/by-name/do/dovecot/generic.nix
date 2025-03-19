@@ -45,6 +45,8 @@
   version,
   hash,
   patches ? [ ],
+  # Re-exported plugins for this version
+  dovecot_pigeonhole,
 }:
 stdenv.mkDerivation {
   pname = "dovecot";
@@ -207,5 +209,7 @@ stdenv.mkDerivation {
       opensmtpd-interaction = nixosTests.opensmtpd;
       inherit (nixosTests) dovecot;
     };
+
+    pigeonhole = dovecot_pigeonhole;
   };
 }
