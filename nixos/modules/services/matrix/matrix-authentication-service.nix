@@ -119,13 +119,15 @@ in
                         freeformType = format.type;
                         options = {
                           host = mkOption {
-                            type = types.str;
+                            type = types.nullOr types.str;
+                            default = null;
                             description = ''
                               Listen on the given host.
                             '';
                           };
                           port = mkOption {
-                            type = types.ints.unsigned;
+                            type = types.nullOr types.ints.unsigned;
+                            default = null;
                             description = ''
                               Listen on the given port.
                             '';
