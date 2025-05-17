@@ -14,6 +14,7 @@ let
     isList
     isDerivation
     all
+    filter
     splitString
     removePrefix
     elemAt
@@ -119,15 +120,18 @@ let
       toOption indent n v
     else if isAttrs v then
       let
-        # Use the first component of the attr name as the section type, and the
-        # rest if present as the section name
-        splits = lib.elemAt (lib.elemAt (lib.split "^([^ ]+)( +(.+))?$" n) 1);
-        sectionType = if v ? section && v.section ? type then v.section.type else splits 0;
-        sectionName = if v ? section && v.section ? name then v.section.name else splits 1;
+        sectionType = v.section.type;
+        sectionName = v.section.name;
+        sectionTitle = concatStringsSep " " (
+          filter (s: s != null) [
+            sectionType
+            sectionName
+          ]
+        );
       in
       concatStringsSep "\n" (
         [
-          "${indent}${sectionType} ${if sectionName == null then "" else "${removePrefix " " sectionName} "}{"
+          "${indent}${sectionTitle} {"
         ]
         ++ (mapAttrsToList (formatKeyValue "${indent}  ") (removeAttrs v [ "section" ]))
         ++ [ "${indent}}" ]
@@ -292,18 +296,40 @@ in
             bool
             int
             listOf
+            nonEmptyStr
             nullOr
             oneOf
             str
             submodule
             ;
           inherit (lib) elemAt;
-          section = submodule (
+          inherit (lib.lists) last length sublist;
+
+          # Override submodule to pass the parent name to the submodule name arg
+          # if the current name is a list (starting with '[definition ') so that
+          # it can be parsed by the submodule
+          submodule' =
+            f:
+            let
+              orig = submodule f;
+              merge =
+                loc: defs:
+                let
+                  loc' =
+                    if builtins.match ''\[definition .*'' (last loc) != null then
+                      sublist 0 (length loc - 1) loc
+                    else
+                      loc;
+                in
+                orig.merge loc' defs;
+            in
+            orig // { inherit merge; };
+
+          section = submodule' (
             { name, ... }:
             let
               # splits name on the first space
-              # and return null when name is a list - e.g. [definition 1-entry 1]
-              splits = if builtins.isList name then null else builtins.match "([^ ]+) (.+)" name;
+              splits = builtins.match "([^ ]+) (.+)" name;
               typeDefault = if splits == null then name else builtins.elemAt splits 0;
               nameDefault = if splits == null then null else builtins.elemAt splits 1;
             in
@@ -312,32 +338,43 @@ in
                 section = {
                   type = mkOption {
                     description = "Section type, mandatory for every section.";
-                    type = str;
+                    type = nonEmptyStr;
                     default = typeDefault;
                   };
+
                   name = mkOption {
                     description = "Section name, comes after section type & is optional in some cases.";
-                    type = nullOr str;
+                    type = nullOr nonEmptyStr;
                     default = nameDefault;
                   };
                 };
               };
+
               freeformType = attrsOf valueType;
             }
           );
+
+          atom = oneOf [
+            int
+            str
+            bool
+          ];
+
+          any = oneOf [
+            atom
+            section
+          ];
+
           valueType =
-            nullOr (oneOf [
-              int
-              str
-              bool
-              (listOf valueType)
-              section
-            ])
+            oneOf [
+              any
+              (listOf any)
+            ]
             // {
               description = "Dovecot config value";
             };
         in
-        section;
+        attrsOf valueType;
       description = ''
         Dovecot configuration, see <https://doc.dovecot.org/2.4.0/core/summaries/settings.html#all-dovecot-settings>
         for all available options.
@@ -381,6 +418,7 @@ in
         };
 
       };
+      visible = "shallow";
     };
 
     enablePop3 = mkEnableOption "starting the POP3 listener (when Dovecot is enabled)";
