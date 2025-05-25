@@ -14,6 +14,7 @@
   cctools,
   nix-update-script,
   versionCheckHook,
+  nixosTests,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
@@ -63,13 +64,13 @@ rustPlatform.buildRustPackage (finalAttrs: {
 
   postPatch = ''
     substituteInPlace crates/config/src/sections/http.rs \
-      --replace ./frontend/dist/    "$out/share/$pname/assets/"
+      --replace-fail ./frontend/dist/    "$out/share/$pname/assets/"
     substituteInPlace crates/config/src/sections/templates.rs \
-      --replace ./share/templates/    "$out/share/$pname/templates/" \
-      --replace ./share/translations/    "$out/share/$pname/translations/" \
-      --replace ./share/manifest.json "$out/share/$pname/assets/manifest.json"
+      --replace-fail ./share/templates/    "$out/share/$pname/templates/" \
+      --replace-fail ./share/translations/    "$out/share/$pname/translations/" \
+      --replace-fail ./share/manifest.json "$out/share/$pname/assets/manifest.json"
     substituteInPlace crates/config/src/sections/policy.rs \
-      --replace ./share/policy.wasm "$out/share/$pname/policy.wasm"
+      --replace-fail ./share/policy.wasm "$out/share/$pname/policy.wasm"
   '';
 
   preBuild = ''
@@ -89,12 +90,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
   versionCheckProgram = "${placeholder "out"}/bin/${finalAttrs.meta.mainProgram}";
   versionCheckProgramArg = "--version";
   doInstallCheck = true;
+
   passthru.updateScript = nix-update-script {
     extraArgs = [
       # avoid unstable pre‐releases
       "--version-regex"
       "^v([0-9.]+)$"
     ];
+
+    tests = { inherit (nixosTests) matrix-authentication-service; };
   };
 
   meta = {
@@ -103,6 +107,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     changelog = "https://github.com/element-hq/matrix-authentication-service/releases/tag/v${finalAttrs.version}";
     license = lib.licenses.agpl3Only;
     maintainers = with lib.maintainers; [ teutat3s ];
+    platforms = lib.platforms.linux;
     mainProgram = "mas-cli";
   };
 })
