@@ -702,6 +702,8 @@ self: super: with self; {
 
   annexremote = callPackage ../development/python-modules/annexremote { };
 
+  annotated-doc = callPackage ../development/python-modules/annotated-doc { };
+
   annotated-types = callPackage ../development/python-modules/annotated-types { };
 
   annotatedyaml = callPackage ../development/python-modules/annotatedyaml { };
@@ -12886,6 +12888,8 @@ self: super: with self; {
   pybox2d = callPackage ../development/python-modules/pybox2d { };
 
   pybravia = callPackage ../development/python-modules/pybravia { };
+
+  pybreaker = callPackage ../development/python-modules/pybreaker { };
 
   pybrowserid = callPackage ../development/python-modules/pybrowserid { };
 

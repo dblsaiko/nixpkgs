@@ -13,14 +13,14 @@ in
 
 python.pkgs.buildPythonApplication rec {
   pname = "lasuite-meet";
-  version = "0.1.42";
+  version = "1.14.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "suitenumerique";
     repo = "meet";
     tag = "v${version}";
-    hash = "sha256-STb4JCEoKgzokIA5mWFqJkFH9mtdnIp8NcopLWYSbwQ=";
+    hash = "sha256-baQVCnkEv5aUy4mKdiscPiiEvwYPfezF03i1HPX64oA=";
   };
 
   sourceRoot = "source/src/backend";
@@ -30,7 +30,12 @@ python.pkgs.buildPythonApplication rec {
     ./secure_settings.patch
   ];
 
-  build-system = with python.pkgs; [ setuptools ];
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace-fail "uv_build>=0.10.9,<0.11.0" "uv_build"
+  '';
+
+  build-system = with python.pkgs; [ uv-build ];
 
   dependencies =
     with python.pkgs;
@@ -40,13 +45,16 @@ python.pkgs.buildPythonApplication rec {
       brevo-python
       brotli
       celery
+      dj-database-url
       django
       django-configurations
       django-cors-headers
       django-countries
       django-extensions
+      django-filter
       django-lasuite
       django-parler
+      django-pydantic-field
       django-redis
       django-storages
       django-timezone-field
@@ -64,9 +72,11 @@ python.pkgs.buildPythonApplication rec {
       mozilla-django-oidc
       nested-multipart-parser
       psycopg
+      pydantic
       pyjwt
       pyopenssl
       python-frontmatter
+      python-magic
       redis
       requests
       sentry-sdk

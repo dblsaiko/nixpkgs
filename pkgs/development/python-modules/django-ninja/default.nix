@@ -14,7 +14,7 @@
 
 buildPythonPackage rec {
   pname = "django-ninja";
-  version = "1.4.3t";
+  version = "1.6.2";
   pyproject = true;
 
   disabled = pythonOlder "3.7";
@@ -23,7 +23,7 @@ buildPythonPackage rec {
     owner = "vitalik";
     repo = "django-ninja";
     tag = "v${version}";
-    hash = "sha256-IiOj2fBuClHyIdn/r3XxKwO+DyrgahagUKrxp+YKZ4E=";
+    hash = "sha256-nnGIhNGnK7q0nbw7EYJP+xCeS1uiuTrhQxf49dA+Sc8=";
   };
 
   build-system = [ flit-core ];
