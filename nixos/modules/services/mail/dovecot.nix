@@ -666,8 +666,8 @@ in
     services.dovecot2.settings =
       # options shared between 2.3 and 2.4 (mostly)
       {
-        dovecot_config_version = mkIf (versionAtLeast cfg.package.version "2.4") cfg.package.version;
-        dovecot_storage_version = mkIf (versionAtLeast cfg.package.version "2.4") cfg.package.version;
+        dovecot_config_version = mkIf (versionAtLeast cfg.package.version "2.4") (mkDefault cfg.package.version);
+        dovecot_storage_version = mkIf (versionAtLeast cfg.package.version "2.4") (mkDefault cfg.package.version);
         base_dir = mkDefault baseDir;
         sendmail_path = mkDefault "/run/wrappers/bin/sendmail";
         mail_plugin_dir = mkDefault "/run/current-system/sw/lib/dovecot/modules";
@@ -687,9 +687,7 @@ in
           user = "root";
         };
 
-        protocols = mkDefault (
-          optional cfg.enableImap "imap" ++ optional cfg.enablePop3 "pop3" ++ optional cfg.enableLmtp "lmtp"
-        );
+        protocols = optional cfg.enableImap "imap" ++ optional cfg.enablePop3 "pop3" ++ optional cfg.enableLmtp "lmtp";
 
         "namespace inbox" = mkIf (cfg.mailboxes != { }) (
           {
@@ -705,13 +703,12 @@ in
             }) (attrValues cfg.mailboxes)
           )
         );
-
-        mail_plugins = mkDefault "$mail_plugins ${concatStringsSep " " cfg.mailPlugins.globally.enable}";
       }
       // optionalAttrs (cfg.mailPlugins.perProtocol != { } || cfg.mailPlugins.globally.enable != [ ]) (
         listToAttrs (
           map (m: {
             name = "protocol ${elemAt (splitString "." m.name) 0}";
+            # FIXME: "$mail_plugins" is invalid in 2.4
             value.mail_plugins = "$mail_plugins ${
               concatStringsSep " " (m.value.enable ++ cfg.mailPlugins.globally.enable)
             }";
@@ -722,7 +719,8 @@ in
         # these options differ quite a bit between 2.3 and 2.4, which is why they were split up here
         if versionAtLeast cfg.package.version "2.4" then
           {
-            mail_home = mkDefault "/var/spool/mail/%{user}";
+            mail_driver = mkDefault "maildir";
+            mail_path = mkDefault "/var/spool/mail/%{user}";
 
             ssl_server_dh_file = mkIf cfg.enableDHE (
               mkDefault "${config.security.dhparams.params.dovecot2.path}"
