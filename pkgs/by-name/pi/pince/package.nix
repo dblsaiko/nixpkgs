@@ -114,6 +114,7 @@ python3Packages.buildPythonApplication rec {
 
   nativeBuildInputs = [
     wrapGAppsHook3
+    gobject-introspection
     qt6.wrapQtAppsHook
   ];
 
