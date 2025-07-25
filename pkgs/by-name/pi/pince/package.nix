@@ -110,20 +110,36 @@ python3Packages.buildPythonApplication rec {
     qt6.wrapQtAppsHook
   ];
 
+  installPhase = ''
+    distBase=$out/opt/$pname/
+    mkdir -p $distBase $out/bin/
+
+    cp -r GUI      $distBase/
+    cp -r i18n     $distBase/
+    cp -r libpince $distBase/
+    cp -r media    $distBase/
+    cp -r tr       $distBase/
+
+    cp -r PINCE.py $distBase/PINCE
+
+    ln -sr $distBase/PINCE $out/bin/PINCE
+
+    mkdir -p $distBase/libpince/libscanmem
+    mkdir -p $distBase/libpince/libptrscan
+
+    cp --preserve ${libscanmem}/include/libscanmem.so   $distBase/libpince/libscanmem/
+    cp --preserve ${libscanmem}/include/scanmem.py      $distBase/libpince/libscanmem/
+
+    cp --preserve ${pointersearcher}/lib/libptrscan.so  $distBase/libpince/libptrscan/
+    cp --preserve ${./ptrscan.py}                       $distBase/libpince/libptrscan/ptrscan.py
+  '';
+
   dontWrapGApps = true;
   dontWrapQtApps = true;
 
-  installPhase = ''
-    mkdir -p $out/bin/
-
-    cp -r GUI      $out/bin/
-    cp -r i18n     $out/bin/
-    cp -r libpince $out/bin/
-    cp -r media    $out/bin/
-    cp -r tr       $out/bin/
-
-    cp -r PINCE.py $out/bin/PINCE
-  '';
+  # doesn't work with symlinks, so manually wrap the binary in $distBase using
+  # wrapPythonProgramsIn
+  dontWrapPythonPrograms = true;
 
   preFixup = ''
     makeWrapperArgs+=("''${gappsWrapperArgs[@]}")
@@ -131,14 +147,7 @@ python3Packages.buildPythonApplication rec {
   '';
 
   postFixup = ''
-    mkdir -p $out/bin/libpince/libscanmem
-    mkdir -p $out/bin/libpince/libptrscan
-
-    cp --preserve ${libscanmem}/include/libscanmem.so   $out/bin/libpince/libscanmem/
-    cp --preserve ${libscanmem}/include/scanmem.py      $out/bin/libpince/libscanmem/
-
-    cp --preserve ${pointersearcher}/lib/libptrscan.so  $out/bin/libpince/libptrscan/
-    cp --preserve ${./ptrscan.py}                       $out/bin/libpince/libptrscan/ptrscan.py
+    wrapPythonProgramsIn "$distBase/" "$out $pythonPath"
   '';
 
   pyproject = false;
