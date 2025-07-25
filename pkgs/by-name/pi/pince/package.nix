@@ -71,18 +71,6 @@ let
 
     buildAndTestSubdir = "libptrscan";
   };
-
-  pythonPATH = python3.withPackages (
-    lb: with lb; [
-      pyqt6
-      pexpect
-      capstone
-      keystone-engine
-      pygdbmi
-      keyboard
-      pygobject3
-    ]
-  );
 in
 python3Packages.buildPythonApplication rec {
   pname = "PINCE";
@@ -96,15 +84,19 @@ python3Packages.buildPythonApplication rec {
     fetchSubmodules = true;
   };
 
-  propagatedBuildInputs = with python3Packages; [
-    pyqt6
-    pexpect
-    capstone
-    keystone-engine
-    pygdbmi
-    keyboard
-    pygobject3
+  propagatedBuildInputs = builtins.attrValues {
+    inherit (python3Packages)
+      pyqt6
+      pexpect
+      capstone
+      keystone-engine
+      pygdbmi
+      keyboard
+      pygobject3
+      ;
+  };
 
+  buildInputs = [
     pkg-config
     gdb
     gobject-introspection
@@ -131,9 +123,6 @@ python3Packages.buildPythonApplication rec {
     cp -r tr       $out/bin/
 
     cp -r PINCE.py $out/bin/PINCE
-
-    patchShebangs --host $out/bin/PINCE
-    wrapPythonProgramsIn "$out/bin/" "$out ${pythonPATH}"
   '';
 
   preFixup = ''
