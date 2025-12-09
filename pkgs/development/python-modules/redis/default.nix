@@ -74,5 +74,6 @@ buildPythonPackage rec {
     homepage = "https://github.com/redis/redis-py";
     changelog = "https://github.com/redis/redis-py/releases/tag/${src.tag}";
     license = lib.licenses.mit;
+    maintainers = [ lib.maintainers.dotlambda ];
   };
 }
