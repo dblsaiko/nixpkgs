@@ -43,7 +43,7 @@
 
 buildPythonPackage rec {
   pname = "fastapi";
-  version = "0.121.1";
+  version = "0.128.0";
   pyproject = true;
 
   disabled = pythonOlder "3.7";
@@ -52,7 +52,7 @@ buildPythonPackage rec {
     owner = "tiangolo";
     repo = "fastapi";
     tag = version;
-    hash = "sha256-uUUARIHY8VBoLfWfMvveapypqiB00cTTWpJ4fi9nvUo=";
+    hash = "sha256-qUTSqTe9mQzfuwqsTCQY6u7Tcnh9XNy4tr5o0/qFFLs=";
   };
 
   build-system = [ pdm-backend ];
@@ -135,6 +135,8 @@ buildPythonPackage rec {
     # Don't test docs and examples
     "docs_src"
     "tests/test_tutorial/test_sql_databases"
+    # Infinite recursion with strawberry-graphql
+    "tests/test_tutorial/test_graphql/test_tutorial001.py"
   ];
 
   pythonImportsCheck = [ "fastapi" ];
