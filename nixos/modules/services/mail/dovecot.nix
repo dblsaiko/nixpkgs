@@ -534,23 +534,6 @@ in
 
               # 2.3-only options
 
-              mail_location = mkOption {
-                default = if isPre24 then "maildir:/var/spool/mail/%u" else null;
-                defaultText = literalExpression ''
-                  if isPre24
-                  then "maildir:/var/spool/mail/%u"
-                  else null
-                '';
-                description = ''
-                  This setting indicates the location for users’ mailboxes.
-
-                  This option is exclusive to Dovecot 2.3.
-
-                  See <https://doc.dovecot.org/2.3/settings/core/#core_setting-mail_location>.
-                '';
-                type = nullOr str;
-              };
-
               plugin = mkOption {
                 default = null;
                 description = "Plugin settings. This option is exclusive to Dovecot 2.3.";
@@ -608,40 +591,6 @@ in
               };
 
               # 2.4-only options
-
-              mail_driver = mkOption {
-                default = if isPre24 then null else "maildir";
-                defaultText = literalExpression ''
-                  if isPre24
-                  then null
-                  else "maildir"
-                '';
-                description = ''
-                  One of the mailbox formats described at [Mailbox Formats](https://doc.dovecot.org/latest/core/config/mailbox_formats/overview.html#mailbox-formats).
-
-                  This option is exclusive to Dovecot 2.4.
-
-                  See <https://doc.dovecot.org/latest/core/config/mail_location.html#mail_driver>.
-                '';
-                type = nullOr str;
-              };
-
-              mail_path = mkOption {
-                default = if isPre24 then null else "/var/spool/mail/%{user}";
-                defaultText = literalExpression ''
-                  if isPre24
-                  then null
-                  else "/var/spool/mail/%{user}"
-                '';
-                description = ''
-                  Path to a directory where the mail is stored.
-
-                  This option is exclusive to Dovecot 2.4.
-
-                  See <https://doc.dovecot.org/latest/core/config/mail_location.html#mail_path>.
-                '';
-                type = nullOr str;
-              };
 
               sieve_script_bin_path = mkOption {
                 default = if isPre24 then null else "/tmp/dovecot-%{user|username|lower}";
@@ -717,7 +666,11 @@ in
           submission = true;
           lmtp = true;
         };
+
         mail_driver = "maildir";
+        mail_home = "/var/vmail/%{user | domain}/%{user | username}";
+        mail_path = "~/mail";
+
         "namespace inbox" = {
           inbox = true;
           separator = "/";
@@ -822,9 +775,7 @@ in
         default = true;
       };
 
-    enablePAM = mkEnableOption "creating a own Dovecot PAM service and configure PAM user logins" // {
-      default = true;
-    };
+    enablePAM = mkEnableOption "creating a own Dovecot PAM service and configure PAM user logins";
 
     showPAMFailure = mkEnableOption "showing the PAM failure message on authentication error (useful for OTPW)";
 
