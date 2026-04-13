@@ -381,8 +381,16 @@ let
           socketPath = "/var/run/dovecot2/old-stats";
           user = "root"; # <- don't use user root in production
         };
-        metricProvider = {
-          services.dovecot2.enable = true;
+        metricProvider = {config, ...}: let
+          dovecot = config.services.dovecot2.package;
+        in {
+          services.dovecot2 = {
+            enable = true;
+            settings = {
+              dovecot_config_version = dovecot.version;
+              dovecot_storage_version = dovecot.version;
+            };
+          };
         };
         exporterTest = ''
           wait_for_unit("prometheus-dovecot-exporter.service")
