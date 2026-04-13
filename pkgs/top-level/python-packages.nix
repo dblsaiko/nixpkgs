@@ -1497,6 +1497,10 @@ self: super: with self; {
     callPackage ../development/python-modules/azure-mgmt-containerregistry
       { };
 
+  azure-mgmt-containerregistrytasks =
+    callPackage ../development/python-modules/azure-mgmt-containerregistrytasks
+      { };
+
   azure-mgmt-containerservice =
     callPackage ../development/python-modules/azure-mgmt-containerservice
       { };
@@ -2608,6 +2612,8 @@ self: super: with self; {
   certbot-nginx = callPackage ../development/python-modules/certbot-nginx { };
 
   certifi = callPackage ../development/python-modules/certifi { };
+
+  certihound = callPackage ../development/python-modules/certihound { };
 
   certipy = callPackage ../development/python-modules/certipy { };
 
@@ -4534,6 +4540,8 @@ self: super: with self; {
   dnfile = callPackage ../development/python-modules/dnfile { };
 
   dns-lexicon = callPackage ../development/python-modules/dns-lexicon { };
+
+  dnsight = callPackage ../development/python-modules/dnsight { };
 
   dnslib = callPackage ../development/python-modules/dnslib { };
 
@@ -6910,6 +6918,8 @@ self: super: with self; {
 
   hatch = callPackage ../development/python-modules/hatch/default.nix { };
 
+  hatch-argparse-manpage = callPackage ../development/python-modules/hatch-argparse-manpage { };
+
   hatch-autorun = callPackage ../development/python-modules/hatch-autorun { };
 
   hatch-babel = callPackage ../development/python-modules/hatch-babel { };
@@ -6923,6 +6933,8 @@ self: super: with self; {
       { };
 
   hatch-fancy-pypi-readme = callPackage ../development/python-modules/hatch-fancy-pypi-readme { };
+
+  hatch-gettext = callPackage ../development/python-modules/hatch-gettext { };
 
   hatch-jupyter-builder = callPackage ../development/python-modules/hatch-jupyter-builder { };
 
@@ -7971,6 +7983,8 @@ self: super: with self; {
 
   jsonable = callPackage ../development/python-modules/jsonable { };
 
+  jsonalias = callPackage ../development/python-modules/jsonalias { };
+
   jsonargparse = callPackage ../development/python-modules/jsonargparse { };
 
   jsonconversion = callPackage ../development/python-modules/jsonconversion { };
@@ -8576,6 +8590,8 @@ self: super: with self; {
   ldfparser = callPackage ../development/python-modules/ldfparser { };
 
   leanblueprint = callPackage ../development/python-modules/leanblueprint { };
+
+  leanclient = callPackage ../development/python-modules/leanclient { };
 
   leaone-ble = callPackage ../development/python-modules/leaone-ble { };
 
@@ -16275,6 +16291,8 @@ self: super: with self; {
 
   pywebpush = callPackage ../development/python-modules/pywebpush { };
 
+  pywebtransport = callPackage ../development/python-modules/pywebtransport { };
+
   pywebview = callPackage ../development/python-modules/pywebview { };
 
   pywemo = callPackage ../development/python-modules/pywemo { };
@@ -18055,6 +18073,8 @@ self: super: with self; {
   solax = callPackage ../development/python-modules/solax { };
 
   solc-select = callPackage ../development/python-modules/solc-select { };
+
+  solders = callPackage ../development/python-modules/solders { };
 
   solidpython2 = callPackage ../development/python-modules/solidpython2 { };
 
@@ -20510,6 +20530,8 @@ self: super: with self; {
   umodbus = callPackage ../development/python-modules/umodbus { };
 
   unasync = callPackage ../development/python-modules/unasync { };
+
+  uncalled-for = callPackage ../development/python-modules/uncalled-for { };
 
   uncertainties = callPackage ../development/python-modules/uncertainties { };
 

@@ -375,8 +375,6 @@ with pkgs;
     practiceMod = true;
   };
 
-  chef-cli = callPackage ../tools/misc/chef-cli { };
-
   coolercontrol = recurseIntoAttrs (callPackage ../applications/system/coolercontrol { });
 
   dhallDirectoryToNix = callPackage ../build-support/dhall/directory-to-nix.nix { };
@@ -1251,10 +1249,6 @@ with pkgs;
 
   gcdemu = callPackage ../applications/emulators/cdemu/gui.nix { };
 
-  goldberg-emu = callPackage ../applications/emulators/goldberg-emu {
-    protobuf = protobuf_21;
-  };
-
   image-analyzer = callPackage ../applications/emulators/cdemu/analyzer.nix { };
 
   kega-fusion = pkgsi686Linux.callPackage ../applications/emulators/kega-fusion { };
@@ -1495,8 +1489,6 @@ with pkgs;
 
   inherit (cue) writeCueValidator;
 
-  dazel = python3Packages.callPackage ../development/tools/dazel { };
-
   detect-secrets = with python3Packages; toPythonApplication detect-secrets;
 
   deterministic-host-uname = deterministic-uname.override {
@@ -1571,8 +1563,6 @@ with pkgs;
   };
 
   apprise = with python3Packages; toPythonApplication apprise;
-
-  asmrepl = callPackage ../development/interpreters/asmrepl { };
 
   avahi-compat = callPackage ../by-name/av/avahi/package.nix {
     withLibdnssdCompat = true;
@@ -1796,10 +1786,6 @@ with pkgs;
 
   ghidra-bin = callPackage ../tools/security/ghidra { };
 
-  gpg-tui = callPackage ../tools/security/gpg-tui {
-    inherit (darwin) libresolv;
-  };
-
   hocr-tools = with python3Packages; toPythonApplication hocr-tools;
 
   hopper = qt5.callPackage ../development/tools/analysis/hopper { };
@@ -1950,9 +1936,6 @@ with pkgs;
 
   binlore = callPackage ../development/tools/analysis/binlore { };
 
-  birdfont = callPackage ../tools/misc/birdfont { };
-  xmlbird = callPackage ../tools/misc/birdfont/xmlbird.nix { stdenv = gccStdenv; };
-
   bmrsa = callPackage ../tools/security/bmrsa/11.nix { };
 
   anystyle-cli = callPackage ../tools/misc/anystyle-cli { };
@@ -2058,10 +2041,6 @@ with pkgs;
 
     mozc = mozc.override { withIbus = true; };
     mozc-ut = mozc-ut.override { withIbus = true; };
-
-    openbangla-keyboard = libsForQt5.callPackage ../applications/misc/openbangla-keyboard {
-      withIbusSupport = true;
-    };
 
     pinyin = callPackage ../tools/inputmethods/ibus-engines/ibus-pinyin { };
 
@@ -2242,7 +2221,7 @@ with pkgs;
   buildEmscriptenPackage = callPackage ../development/em-modules/generic { };
 
   emscripten = callPackage ../development/compilers/emscripten {
-    llvmPackages = llvmPackages_21;
+    llvmPackages = llvmPackages_22;
   };
 
   emscriptenPackages = recurseIntoAttrs (callPackage ./emscripten-packages.nix { });
@@ -2292,10 +2271,6 @@ with pkgs;
   fcitx5-lua = callPackage ../tools/inputmethods/fcitx5/fcitx5-lua.nix { lua = lua5_3; };
 
   fcitx5-m17n = callPackage ../tools/inputmethods/fcitx5/fcitx5-m17n.nix { };
-
-  fcitx5-openbangla-keyboard = libsForQt5.callPackage ../applications/misc/openbangla-keyboard {
-    withFcitx5Support = true;
-  };
 
   fcitx5-gtk = callPackage ../tools/inputmethods/fcitx5/fcitx5-gtk.nix { };
 
@@ -2415,13 +2390,6 @@ with pkgs;
     pinentry = if stdenv.hostPlatform.isDarwin then pinentry_mac else pinentry-gtk2;
   };
   gnupg = gnupg24;
-
-  gnuplot = libsForQt5.callPackage ../tools/graphics/gnuplot { };
-
-  gnuplot_qt = gnuplot.override { withQt = true; };
-
-  # must have AquaTerm installed separately
-  gnuplot_aquaterm = gnuplot.override { aquaterm = true; };
 
   gnused = callPackage ../tools/text/gnused { };
 
@@ -3380,8 +3348,6 @@ with pkgs;
   # to match naming of other package repositories
   spire-agent = spire.agent;
   spire-server = spire.server;
-
-  spoof-mac = python3Packages.callPackage ../tools/networking/spoof-mac { };
 
   stirling-pdf-desktop = callPackage ../by-name/st/stirling-pdf/package.nix {
     isDesktopVariant = true;
@@ -5730,8 +5696,6 @@ with pkgs;
 
   edb = libsForQt5.callPackage ../development/tools/misc/edb { };
 
-  license_finder = callPackage ../development/tools/license_finder { };
-
   # NOTE: Override and set useIcon = false to use Awk instead of Icon.
   fffuu = haskell.lib.compose.justStaticExecutables (
     haskellPackages.callPackage ../tools/misc/fffuu { }
@@ -6194,8 +6158,6 @@ with pkgs;
   ustream-ssl-mbedtls = callPackage ../development/libraries/ustream-ssl {
     ssl_implementation = mbedtls_2;
   };
-
-  cxxtest = python3Packages.callPackage ../development/libraries/cxxtest { };
 
   # Make bdb5 the default as it is the last release under the custom
   # bsd-like license
@@ -6790,10 +6752,6 @@ with pkgs;
     })
     libprom
     ;
-
-  libpulsar = callPackage ../development/libraries/libpulsar {
-    protobuf = protobuf_21;
-  };
 
   libsigcxx = callPackage ../development/libraries/libsigcxx { };
 
@@ -7614,25 +7572,28 @@ with pkgs;
       zig_0_13 = zigPackages."0.13";
       zig_0_14 = zigPackages."0.14";
       zig_0_15 = zigPackages."0.15";
+      zig_0_16 = zigPackages."0.16";
     })
     zigPackages
     zig_0_13
     zig_0_14
     zig_0_15
+    zig_0_16
     ;
 
   # If this is updated, the default zls version should also be updated to match the default zig version.
-  zig = zig_0_15;
+  zig = zig_0_16;
 
   zigStdenv = if stdenv.cc.isZig then stdenv else lowPrio zig.passthru.stdenv;
 
   inherit (callPackages ../development/tools/zls { })
     zls_0_14
     zls_0_15
+    zls_0_16
     ;
 
   # This should be kept updated to ensure the default zls version matches the default zig version.
-  zls = zls_0_15;
+  zls = zls_0_16;
 
   libzint = zint-qt.override { withGUI = false; };
 
@@ -8224,8 +8185,6 @@ with pkgs;
   };
 
   nsdiff = perlPackages.nsdiff;
-
-  openafs = callPackage ../servers/openafs/1.8 { };
 
   openresty = callPackage ../servers/http/openresty {
     zlib-ng = zlib;
@@ -9519,12 +9478,6 @@ with pkgs;
     pname = "floorp-bin";
   };
 
-  formiko =
-    with python3Packages;
-    callPackage ../applications/editors/formiko {
-      inherit buildPythonApplication;
-    };
-
   inherit
     ({
       freeoffice = callPackage ../applications/office/softmaker/freeoffice.nix { };
@@ -9584,12 +9537,6 @@ with pkgs;
     }
   );
 
-  librespot = callPackage ../applications/audio/librespot {
-    withALSA = stdenv.hostPlatform.isLinux;
-    withPulseAudio = config.pulseaudio or stdenv.hostPlatform.isLinux;
-    withPortAudio = stdenv.hostPlatform.isDarwin;
-  };
-
   linssid = libsForQt5.callPackage ../applications/networking/linssid { };
 
   deadd-notification-center = haskell.lib.compose.justStaticExecutables (
@@ -9606,14 +9553,8 @@ with pkgs;
 
   molsketch = libsForQt5.callPackage ../applications/editors/molsketch { };
 
-  gphoto2 = callPackage ../applications/misc/gphoto2 { };
-
-  gphoto2fs = callPackage ../applications/misc/gphoto2/gphotofs.nix { };
-
   graphicsmagick_q16 = graphicsmagick.override { quantumdepth = 16; };
   graphicsmagick-imagemagick-compat = graphicsmagick.imagemagick-compat;
-
-  q4wine = kdePackages.callPackage ../applications/misc/q4wine { };
 
   googleearth-pro = libsForQt5.callPackage ../applications/misc/googleearth-pro { };
 
@@ -9815,10 +9756,6 @@ with pkgs;
   };
 
   jackmix_jack1 = jackmix.override { jack = jack1; };
-
-  jwm = callPackage ../applications/window-managers/jwm { };
-
-  jwm-settings-manager = callPackage ../applications/window-managers/jwm/jwm-settings-manager.nix { };
 
   inherit (callPackage ../applications/networking/cluster/k3s { })
     k3s_1_33
@@ -10857,8 +10794,6 @@ with pkgs;
 
   wrapThunderbird = callPackage ../applications/networking/mailreaders/thunderbird/wrapper.nix { };
 
-  wsjtx = qt5.callPackage ../applications/radio/wsjtx { };
-
   x2gokdriveclient = libsForQt5.callPackage ../applications/networking/remote/x2gokdriveclient { };
 
   x32edit = callPackage ../applications/audio/midas/x32edit.nix { };
@@ -11431,12 +11366,6 @@ with pkgs;
 
   ### SCIENCE/CHEMISTY
 
-  avogadrolibs = callPackage ../development/libraries/science/chemistry/avogadrolibs { };
-
-  molequeue = libsForQt5.callPackage ../development/libraries/science/chemistry/molequeue { };
-
-  avogadro2 = callPackage ../applications/science/chemistry/avogadro2 { };
-
   libxc_7 = pkgs.libxc.override { version = "7.0.0"; };
 
   molbar = with python3Packages; toPythonApplication molbar;
@@ -11551,10 +11480,7 @@ with pkgs;
     lapack = lapack-ilp64;
   };
 
-  suitesparse_5_3 = callPackage ../development/libraries/science/math/suitesparse {
-    inherit (llvmPackages) openmp;
-  };
-  suitesparse = suitesparse_5_3;
+  suitesparse = callPackage ../development/libraries/science/math/suitesparse { };
 
   trilinos-mpi = trilinos.override { withMPI = true; };
 

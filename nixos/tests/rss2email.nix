@@ -3,7 +3,7 @@ import ./make-test-python.nix {
 
   nodes = {
     server =
-      { pkgs, ... }:
+      { config, pkgs, ... }:
       {
         imports = [ common/user-account.nix ];
         services.nginx = {
@@ -36,9 +36,10 @@ import ./make-test-python.nix {
           enablePAM = true;
           settings = {
             dovecot_config_version = "2.4.3";
-            dovecot_storage_version = "2.4.3";
+            dovecot_storage_version = config.services.dovecot2.package.version;
+            mail_driver = "maildir";
             mail_path = "~/mail";
-            protocols = [ "imap" ];
+            protocols.imap = true;
           };
         };
         environment.systemPackages =
@@ -71,7 +72,7 @@ import ./make-test-python.nix {
     server.systemctl("start network-online.target")
     server.wait_for_unit("network-online.target")
     server.wait_for_unit("opensmtpd")
-    server.wait_for_unit("dovecot2")
+    server.wait_for_unit("dovecot")
     server.wait_for_unit("nginx")
     server.wait_for_unit("rss2email")
 

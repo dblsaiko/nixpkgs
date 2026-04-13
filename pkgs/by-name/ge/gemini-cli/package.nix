@@ -15,18 +15,18 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "gemini-cli";
-  version = "0.37.0";
+  version = "0.38.1";
 
   src = fetchFromGitHub {
     owner = "google-gemini";
     repo = "gemini-cli";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-8UiHsBggmiJCs9sWGQoq0W2FNToAKFakGdAKvFl4ceo=";
+    hash = "sha256-Iq/KxQ8rbLtXDbGzcZxspfFwar189H3mBWwOD4hO7HU=";
   };
 
   nodejs = nodejs_22;
 
-  npmDepsHash = "sha256-lLywxLYmfO7EIYewPwISV5izAcOpy1350oJGwdsV6L8=";
+  npmDepsHash = "sha256-T3fxNFvkLR7f49GQjzzTnl3VM+VUUgJfFF5d2GGe7L4=";
 
   dontPatchElf = stdenv.isDarwin;
 

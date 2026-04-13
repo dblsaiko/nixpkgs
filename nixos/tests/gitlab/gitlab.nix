@@ -35,7 +35,7 @@ in
 
   nodes = {
     gitlab =
-      { ... }:
+      { config, ... }:
       {
         imports = [ ../common/user-account.nix ];
 
@@ -78,8 +78,10 @@ in
           enablePAM = true;
           settings = {
             dovecot_config_version = "2.4.3";
-            dovecot_storage_version = "2.4.3";
+            dovecot_storage_version = config.services.dovecot2.package.version;
             protocols.imap = true;
+            mail_driver = "maildir";
+            mail_path = "~/mail";
           };
         };
 
